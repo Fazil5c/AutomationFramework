@@ -3,6 +3,7 @@ package com.boa;
 import com.boa.base.*;
 import com.boa.pages.HomePage;
 import com.boa.pages.LoginPage;
+import com.boa.util.LogUtil;
 import org.openqa.selenium.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,6 +15,9 @@ public class LoginTest extends FrameworkInitialize {
 
     @BeforeSuite
     public void initialize() {
+        LogUtil logUtil=new LogUtil();
+        logUtil.createLogFile();
+        logUtil.write("Framework Initialize");
         initializeBrowser(BrowserType.Chrome);
         DriverContext.browser.goToURL("http://leaftaps.com/crmsfa/control/main");
     }
