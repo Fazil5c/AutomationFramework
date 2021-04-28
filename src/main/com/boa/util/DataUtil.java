@@ -74,5 +74,9 @@ public final class DataUtil {
         return (text.equalsIgnoreCase("true") || (text.equalsIgnoreCase("false")));
     }
 
+    public static String doubleToString(double value){
+        return value % 1 != 0 ? String.valueOf(value) : String.valueOf((int) value);
+    }
+
 }
 
