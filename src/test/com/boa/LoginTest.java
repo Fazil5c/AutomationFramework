@@ -5,6 +5,7 @@ import com.boa.pages.HomePage;
 import com.boa.pages.LoginPage;
 import com.boa.util.ExcelUtil;
 import com.boa.util.LogUtil;
+import org.openqa.selenium.JavascriptExecutor;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -31,9 +32,8 @@ public class LoginTest extends FrameworkInitialize {
         LinkedHashMap<String, String> excelData = excelUtil.readExcelSheet(EXCEL_FILE_NAME, EXCEL_SHEET_NAME, "DataRefKey", "Values");
         String username = excelData.get("Username");
         String password = excelData.get("Password");
-        currentPage = getInstance(LoginPage.class);
-        currentPage = currentPage.As(LoginPage.class).login(username, password);
-        System.out.println(currentPage.As(HomePage.class).getTitle());
+        LoginPage loginPage=new LoginPage();
+        loginPage.login(username,password);
     }
 
     @AfterTest
