@@ -113,59 +113,5 @@ public class WaitTimeUtil {
         return waitForElementClickable(parent,by,dynamicWaitTime);
     }
 
-    public static WebElement reIdentifyElement(WebElement webElement){
-        RemoteWebElement remoteWebElement = RemoteWebElement.class.cast(webElement);
-        SearchContext parent = remoteWebElement.getWrappedDriver();
-
-        String[] definitions = webElement.toString().split("->");
-
-        for (int index = 0; index < definitions.length; index++) {
-            String localString = definitions[index].trim();
-            localString = localString.substring(0, localString.length() - (definitions.length - index));
-            String[] isArray = localString.split(":", 2);
-            By by = Utilities.by(isArray[0], isArray[1]);
-
-            WaitTimeUtil.waitForElement(parent, by, 0);
-
-            if (webElement == null) {
-                break;
-            }
-            parent = webElement;
-        }
-        return webElement;
-    }
-
-    public static boolean isRecursive(int maxAllowed) {
-        StackTraceElement[] traces;
-        try {
-            traces = Thread.currentThread().getStackTrace();
-        } catch (SecurityException e) {
-            return false;
-        }
-
-        StackTraceElement baseTrace = traces[1];
-
-        for (int index = 2; index < traces.length; index++) {
-            StackTraceElement currTrace = traces[index];
-
-            if (baseTrace.getClassName().equals(Utilities.class.getName())) {
-                baseTrace = traces[index];
-                continue;
-            }
-
-            boolean same = currTrace.getClassName().equals(baseTrace.getClassName()) && currTrace.getMethodName().equals(baseTrace.getModuleName());
-
-            if (!same)
-                return false;
-
-            if (--maxAllowed == -1)
-                return true;
-        }
-        return false;
-    }
-
-    public static boolean isRecursive(){
-        return WaitTimeUtil.isRecursive(1);
-    }
 
 }

@@ -1,5 +1,6 @@
 package com.boa.base;
 
+import com.boa.util.DataUtil;
 import com.boa.util.WaitTimeUtil;
 import org.openqa.selenium.*;
 
@@ -33,6 +34,16 @@ public class BaseTestElements {
 
     }
 
+    public boolean isElementClickable(WebElement element) {
+        if (!this.isElementVisible(element))
+            return false;
+
+        if (!element.isEnabled())
+            return this.setException(new ElementNotInteractableException("Element: " + element + "is not enabled"), false);
+
+        return true;
+    }
+
     public WebElement findElement(SearchContext parent, By by) {
         WebElement element = WaitTimeUtil.waitForElement(parent, by);
 
@@ -51,10 +62,30 @@ public class BaseTestElements {
         return element;
     }
 
-    public boolean clickElm(SearchContext parent, By by) {
-        WebElement element = this.findElementClickable(parent, by);
-        element.click();
-        return true;
+    public void scrollToView(WebElement element){
+        JavascriptExecutor js= JavascriptExecutor.class.cast(DriverContext.driver);
+
+        try {
+            js.executeScript("arguments[0].scrollIntoView()",element);
+        }
+        catch (Throwable t){
+           // TODO: need to add respective exception
+        }
     }
+
+    public void scrollToView(SearchContext parent,By by){
+        WebElement element = WaitTimeUtil.waitForElementClickable(parent, by);
+        if(DataUtil.isNull(element)){
+            this.scrollToView(element);
+        }
+    }
+
+   /* public boolean clickElm(WebElement element){
+        if(!this.isElementClickable(element))
+            return false;
+
+
+    }*/
+
 
 }

@@ -3,7 +3,7 @@ package com.boa.base;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class FrameworkInitialize extends Base {
+public class FrameworkInitialize {
 
     public void initializeBrowser(BrowserType browserType) {
         WebDriver driver=null;

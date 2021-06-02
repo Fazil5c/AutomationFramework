@@ -5,7 +5,7 @@ import org.openqa.selenium.support.PageFactory;
 
 public abstract class BasePage extends BaseTestElements {
     public  BasePage() {
-        //PageFactory.initElements(DriverContext.driver, this);
+
     }
 
 }
