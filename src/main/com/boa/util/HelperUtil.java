@@ -5,6 +5,8 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class HelperUtil {
 
     public static By by(String locateBy, String locator) {
@@ -78,7 +80,7 @@ public class HelperUtil {
                 continue;
             }
 
-            boolean same = currTrace.getClassName().equals(baseTrace.getClassName()) && currTrace.getMethodName().equals(baseTrace.getModuleName());
+            boolean same = currTrace.getClassName().equals(baseTrace.getClassName()) && currTrace.getMethodName().equals(baseTrace.getMethodName());
 
             if (!same)
                 return false;
@@ -120,4 +122,15 @@ public class HelperUtil {
         return false;
     }
 
+    public static boolean isCausedBy(Throwable source, Class<? extends Throwable> expected){
+        if(source.getClass().equals(expected)) return true;
+
+        Throwable cause = source.getClass().equals(InvocationTargetException.class) ? InvocationTargetException.class.cast(source).getTargetException() : source.getCause();
+
+        if(cause==null) return  false;
+
+        if(cause.equals(source)) return  false;
+
+        return HelperUtil.isCausedBy(cause,expected);
+    }
 }

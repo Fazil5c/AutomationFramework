@@ -1,8 +1,12 @@
 package com.boa.base;
 
 import com.boa.util.DataUtil;
+import com.boa.util.HelperUtil;
 import com.boa.util.WaitTimeUtil;
 import org.openqa.selenium.*;
+import org.openqa.selenium.remote.RemoteWebElement;
+
+import javax.swing.text.Utilities;
 
 public class BaseTestElements {
     private Throwable t;
@@ -34,6 +38,28 @@ public class BaseTestElements {
 
     }
 
+    public WebElement reIdentifyElement(WebElement webElement) {
+        RemoteWebElement remoteWebElement = RemoteWebElement.class.cast(webElement);
+        SearchContext parent = remoteWebElement.getWrappedDriver();
+
+        String[] definitions = webElement.toString().split("->");
+
+        for (int index = 1; index < definitions.length; index++) {
+            String localString = definitions[index].trim();
+            localString = localString.substring(0, localString.length() - (definitions.length - index));
+            String[] isArray = localString.split(":", 2);
+            By by = HelperUtil.by(isArray[0], isArray[1]);
+
+            WaitTimeUtil.waitForElement(parent, by, 0);
+
+            if (webElement == null) {
+                break;
+            }
+            parent = webElement;
+        }
+        return webElement;
+    }
+
     public boolean isElementClickable(WebElement element) {
         if (!this.isElementVisible(element))
             return false;
@@ -62,30 +88,61 @@ public class BaseTestElements {
         return element;
     }
 
-    public void scrollToView(WebElement element){
-        JavascriptExecutor js= JavascriptExecutor.class.cast(DriverContext.driver);
+    public void scrollToView(WebElement element) {
+        JavascriptExecutor js = JavascriptExecutor.class.cast(DriverContext.driver);
 
         try {
-            js.executeScript("arguments[0].scrollIntoView()",element);
-        }
-        catch (Throwable t){
-           // TODO: need to add respective exception
+            js.executeScript("arguments[0].scrollIntoView()", element);
+        } catch (Throwable t) {
+            // TODO: need to add respective exception
         }
     }
 
-    public void scrollToView(SearchContext parent,By by){
+    public void scrollToView(SearchContext parent, By by) {
         WebElement element = WaitTimeUtil.waitForElementClickable(parent, by);
-        if(DataUtil.isNull(element)){
+        if (DataUtil.isNull(element)) {
             this.scrollToView(element);
         }
     }
 
-   /* public boolean clickElm(WebElement element){
-        if(!this.isElementClickable(element))
-            return false;
+    public boolean clickElm(WebElement element) {
+        try {
+            if (!this.isElementClickable(element))
+                return false;
+
+            if (HelperUtil.isRecursiveClass()) this.scrollToView(element);
+
+            element.click();
+
+            return true;
+
+        } catch (StaleElementReferenceException e) {
+            if (HelperUtil.isRecursive()) return this.setException(e, false);
+
+            element = this.reIdentifyElement(element);
+
+            if (element==null) return setException(e,false);
+
+            return this.clickElm(element);
+        }
+    }
+
+    public boolean clickElm(SearchContext parent, By by) {
+
+            WebElement element = this.findElementClickable(parent, by);
+
+            if (DataUtil.isNull(element)) return false;
+
+            boolean success = this.clickElm(element);
+
+            if (!success)
+                if (HelperUtil.isCausedBy(this.t, StaleElementReferenceException.class))
+                    if (!HelperUtil.isRecursive())
+                        return this.clickElm(element);
+
+            return success;
+
+        }
 
 
-    }*/
-
-
-}
+    }
