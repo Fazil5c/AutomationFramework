@@ -13,13 +13,16 @@ public class LoginPage extends BasePage {
     By userNameTxtBox = By.name("USERNAME");
     By passwordTxtBox = By.name("PASSWORD");
     By loginBtn = By.xpath("//input[@value='Login']");
+    By gitUrl =By.xpath("//a[normalize-space(text())='Make a Gift']");
 
     public LoginPage() {
 
     }
 
     public HomePage login(String userName, String password) {
-        super.clickElm(DriverContext.driver,loginBtn);
+       // super.clickElm(DriverContext.driver,loginBtn);
+        scrollToCenter(DriverContext.driver,gitUrl);
+        clickElm(DriverContext.driver,gitUrl);
         return new HomePage();
     }
 

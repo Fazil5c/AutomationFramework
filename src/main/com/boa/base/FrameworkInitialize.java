@@ -10,7 +10,7 @@ public class FrameworkInitialize {
 
         switch (browserType) {
             case Chrome: {
-                System.setProperty("webdriver.chrome.driver", ".\\src\\resources\\drivers\\chromedriver_90.exe");
+                System.setProperty("webdriver.chrome.driver", ".\\src\\resources\\drivers\\chromedriver_89.exe");
                 driver = new ChromeDriver();
                 break;
             }

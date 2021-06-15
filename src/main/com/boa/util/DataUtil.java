@@ -1,28 +1,31 @@
 package com.boa.util;
 
 import com.google.common.base.CharMatcher;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public final class DataUtil {
     protected static final CharMatcher NOSPECIALS = CharMatcher.inRange('a', 'z').or(CharMatcher.inRange('A', 'Z')).or(CharMatcher.inRange('0', '9')).precomputed();
     protected static final CharMatcher NUMERIC = CharMatcher.inRange('a', 'z').or(CharMatcher.inRange('A', 'Z')).or(CharMatcher.inRange('0', '9')).precomputed().or(CharMatcher.is('.'));
 
-    public static Boolean isNull(Object value) {
+    public static boolean isNull(Object value) {
         if (null == value) {
             return true;
         }
         return String.valueOf(value).equals("null");
     }
 
-    public static Boolean isEmpty(String value) {
+    public static boolean isEmpty(String value) {
         if (DataUtil.isNull(value)) {
             return true;
         }
         return value.trim().length() == 0;
     }
 
-    public static Boolean isEmpty(Object value) {
+    public static boolean isEmpty(Object value) {
         if (DataUtil.isNull(value)) {
             return true;
         }
@@ -39,9 +42,9 @@ public final class DataUtil {
         return DataUtil.isEmpty(value.toString());
     }
 
-    public static Boolean toBoolean(Object value) {
+    public static boolean toBoolean(Object value) {
         //retrieve the stored string
-        if(isNull(value)){
+        if (isNull(value)) {
             return false;
         }
 
@@ -57,7 +60,7 @@ public final class DataUtil {
             case "on":
             case "accept":
             case "1":
-            case "success" :
+            case "success":
             case "yeah":
                 return true;
             default:
@@ -66,7 +69,7 @@ public final class DataUtil {
 
     }
 
-    public static Boolean isBoolean(Object value) {
+    public static boolean isBoolean(Object value) {
         if (DataUtil.isEmpty(value)) {
             return false;
         }
@@ -74,9 +77,58 @@ public final class DataUtil {
         return (text.equalsIgnoreCase("true") || (text.equalsIgnoreCase("false")));
     }
 
-    public static String doubleToString(double value){
+    public static String doubleToString(double value) {
         return value % 1 != 0 ? String.valueOf(value) : String.valueOf((int) value);
     }
+
+    public static boolean isNumeric(String value) {
+        value = value.trim().replace(" ", "");
+        char decimalValue = '.';
+        if (value != null && value.length() != 0) {
+            int sz = value.length();
+            for (int i = 0; i < sz; ++i) {
+                if (decimalValue == value.charAt(i))
+                    continue;
+                if (!Character.isDigit(value.charAt(i))) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isNumeric(Object value) {
+        value = value.toString();
+        return isNumeric(value);
+    }
+
+    public static BigDecimal getBigDecimal(Object input, double defaultValue) {
+        String text = input.toString();
+
+        if (!DataUtil.isNumeric(text) || DataUtil.isEmpty(text))
+            return BigDecimal.valueOf(defaultValue);
+
+        return new BigDecimal(text);
+    }
+
+    public static double getDouble(Object input, double defaultValue) {
+        return DataUtil.getBigDecimal(input, defaultValue).doubleValue();
+    }
+
+    public static int getInt(Object input, int defaultValue) {
+        return DataUtil.getBigDecimal(input, defaultValue).intValue();
+    }
+
+    public static double getDouble(Object input) {
+        return DataUtil.getDouble(input, 0.0);
+    }
+
+    public static int getInt(Object input) {
+        return DataUtil.getInt(input, 0);
+    }
+
 
 }
 

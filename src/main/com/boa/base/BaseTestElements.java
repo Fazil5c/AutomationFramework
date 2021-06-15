@@ -7,6 +7,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import javax.swing.text.Utilities;
+import javax.xml.crypto.Data;
 
 public class BaseTestElements {
     private Throwable t;
@@ -50,7 +51,7 @@ public class BaseTestElements {
             String[] isArray = localString.split(":", 2);
             By by = HelperUtil.by(isArray[0], isArray[1]);
 
-            WaitTimeUtil.waitForElement(parent, by, 0);
+            webElement= WaitTimeUtil.waitForElement(parent, by, 0);
 
             if (webElement == null) {
                 break;
@@ -100,9 +101,31 @@ public class BaseTestElements {
 
     public void scrollToView(SearchContext parent, By by) {
         WebElement element = WaitTimeUtil.waitForElementClickable(parent, by);
-        if (DataUtil.isNull(element)) {
+        if (!DataUtil.isNull(element)) {
             this.scrollToView(element);
         }
+    }
+
+    public void scrollToCenter(WebElement element){
+        JavascriptExecutor js = JavascriptExecutor.class.cast(DriverContext.driver);
+        double yPos=0;
+        int desireYPos=360;
+
+        try{
+            yPos = DataUtil.getDouble(js.executeScript("return arguments[0].getBoundingClientRect().top", element));
+            js.executeScript("window.scrollBy(0,arguments[0]-arguments[1])",yPos,desireYPos);
+        }
+        catch (Throwable t){
+            //TODO
+            System.out.println(t.getMessage());
+        }
+
+    }
+    
+    public void scrollToCenter(SearchContext parent,By by){
+        WebElement element = WaitTimeUtil.waitForElementClickable(parent, by);
+        if(!DataUtil.isNull(element))
+         this.scrollToCenter(element);
     }
 
     public boolean clickElm(WebElement element) {
@@ -125,6 +148,23 @@ public class BaseTestElements {
 
             return this.clickElm(element);
         }
+        catch (ElementClickInterceptedException e){
+            if(!HelperUtil.isRecursive()){
+                //TODO: Handle if we have overlay in our application
+
+                return this.clickElm(element);
+            }
+            else if(!HelperUtil.isRecursive(2)){
+                //TODO: Jse click
+            }
+            else{
+                return setException(e,false);
+            }
+        }
+        catch (Throwable t){
+            return setException(t,false);
+        }
+        return false;
     }
 
     public boolean clickElm(SearchContext parent, By by) {

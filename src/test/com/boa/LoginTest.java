@@ -23,7 +23,7 @@ public class LoginTest extends FrameworkInitialize {
         logUtil.createLogFile();
         logUtil.write("Framework Initialize");
         initializeBrowser(BrowserType.Chrome);
-        DriverContext.browser.goToURL("http://leaftaps.com/crmsfa/control/main");
+        DriverContext.browser.goToURL("https://writingcenter.unc.edu/tips-and-tools/articles/");
     }
 
     @Test
