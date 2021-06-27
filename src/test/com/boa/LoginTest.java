@@ -22,7 +22,7 @@ public class LoginTest extends FrameworkInitialize {
         LogUtil logUtil = new LogUtil();
         logUtil.createLogFile();
         logUtil.write("Framework Initialize");
-        initializeBrowser(BrowserType.Chrome);
+        initializeOSAndBrowser(OSType.Ubuntu,BrowserType.Chrome);
         DriverContext.browser.goToURL("https://writingcenter.unc.edu/tips-and-tools/articles/");
     }
 
